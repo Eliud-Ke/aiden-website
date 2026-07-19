@@ -246,3 +246,59 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5); /* Brightens when you hover over the scrollbar */
 }
+
+/* 11. Frame 4 Planner Cards */
+.planner-card {
+  position: relative;
+  /* FIX: Removed 'transform' transition so it stops fighting GSAP scrubbing! */
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+}
+
+.planner-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+  /* FIX: Removed translateY(-4px) to protect the melt animation */
+}
+
+.planner-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.planner-header, .planner-text {
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.planner-card:hover .planner-header {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.planner-card:hover .planner-text {
+  color: #e4e4e7;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* 12. Master Box Hover Glow */
+.master-header, p.master-text {
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.master-hover-group {
+  pointer-events: auto; 
+}
+
+.master-hover-group:hover .master-header {
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
+}
+
+/* FIX: Firmly targeting the paragraph tag and forcing the white glow override */
+.master-hover-group:hover p.master-text {
+  color: #e4e4e7 !important;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important;
+}

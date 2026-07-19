@@ -266,17 +266,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ----------------------------------------------------
-  // 9. FRAME 2: GRID-BASED INTERACTIVE PARTICLE SYSTEM
+  // 9. GRID-BASED INTERACTIVE PARTICLE SYSTEM
   // ----------------------------------------------------
-  const canvas = document.getElementById('particle-canvas');
-  if (canvas) {
+  function initMagneticGrid(canvasId, options = {}) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let width, height;
     
     // Grid settings
-    const gridSize = 40; // Pixels between each dot
+    const gridSize = 40; 
     let particles = [];
     let mouse = { x: null, y: null, radius: 350 };
+
+    // Set defaults or use custom positions for the "hole"
+    const holeX = options.holeX || 0.5; // Defaults to center (50%)
+    const holeY = options.holeY || 0.5; // Defaults to center (50%)
+    const holeRadiusMultiplier = options.holeRadius || 0.35;
 
     window.addEventListener('mousemove', (e) => {
       mouse.x = e.clientX;
@@ -287,7 +293,6 @@ document.addEventListener("DOMContentLoaded", () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
       
-      // Initialize Grid
       particles = [];
       for (let x = gridSize / 2; x < width; x += gridSize) {
         for (let y = gridSize / 2; y < height; y += gridSize) {
@@ -303,11 +308,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.clearRect(0, 0, width, height);
 
       particles.forEach(p => {
-        // 1. Distance from center (for the fade-out)
-        const dxCenter = p.x - width / 2;
-        const dyCenter = p.y - height / 2;
+        // 1. Distance from the dynamic "hole" center
+        const dxCenter = p.x - (width * holeX);
+        const dyCenter = p.y - (height * holeY);
         const distCenter = Math.sqrt(dxCenter * dxCenter + dyCenter * dyCenter);
-        const bodyRadius = height * 0.35;
+        const bodyRadius = height * holeRadiusMultiplier;
 
         // 2. Distance from mouse
         const dxMouse = p.x - (mouse.x || -999);
@@ -315,28 +320,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
 
         // 3. BULGE PHYSICS
-        // If mouse is near, calculate the angle and push the dot away
         let offsetX = 0;
         let offsetY = 0;
         let scale = 1;
 
         if (distMouse < mouse.radius) {
-          const pushStrength = (1 - distMouse / mouse.radius) * 20; // 20px max push
+          const pushStrength = (1 - distMouse / mouse.radius) * 20; 
           const angle = Math.atan2(dyMouse, dxMouse);
           
           offsetX = Math.cos(angle) * pushStrength;
           offsetY = Math.sin(angle) * pushStrength;
           
-          scale = 2; // Make them grow when pushed
+          scale = 2; 
         }
 
-        // 4. Opacity logic
+        // 4. Opacity logic (hides dots inside the bodyRadius)
         let alpha = 0;
         if (distCenter > bodyRadius) {
           alpha = Math.min(1, (distCenter - bodyRadius) / 200);
         }
 
-        // Apply the push to the drawing coordinates
         ctx.beginPath();
         ctx.arc(p.x + offsetX, p.y + offsetY, p.baseRadius * scale, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
@@ -348,6 +351,20 @@ document.addEventListener("DOMContentLoaded", () => {
     
     draw();
   }
+
+  // Fire up the grids with custom hole placements!
+  initMagneticGrid('particle-canvas', { 
+    holeX: 0.5, 
+    holeY: 0.5, 
+    holeRadius: 0.35 
+  }); 
+
+  initMagneticGrid('particle-canvas-f4', { 
+    holeX: 0.25, // Shifts the hole to the left (25% of screen width)
+    holeY: 0.5,  // Keeps it vertically centered
+    holeRadius: 0.45 // Makes the hole slightly larger to cover both the calendar and mail
+  });
+
   // ----------------------------------------------------
   // 10. FRAME 2: CLICK-TO-EXPAND LOGIC
   // ----------------------------------------------------
@@ -493,5 +510,81 @@ document.addEventListener("DOMContentLoaded", () => {
     duration: 1.2,
     ease: "power4.out"
   });
+
+  // ----------------------------------------------------
+  // 15. FRAME 4: CARDS ENTRANCE & MERGE ANIMATION
+  // ----------------------------------------------------
+  
+  // 1. The Entrance Animation (Bottom-Up)
+  // FIX: We now animate the '.entrance-card' wrapper so it doesn't fight the melt animation!
+  gsap.set(".entrance-card", { opacity: 0, y: 60 });
+  gsap.set([".master-anim-header", ".master-anim-text"], { opacity: 0, y: 40 });
+
+  const f4EntranceTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#frame-4",
+      start: "top 45%", 
+      toggleActions: "play none none reverse"
+    }
+  });
+
+  f4EntranceTl.to(".entrance-card", { 
+    y: 0, 
+    opacity: 1, 
+    duration: 1, 
+    stagger: 0.15, 
+    ease: "power3.out" 
+  });
+
+  // 2. The Pin & Merge Animation
+  // This completely locks the screen in place while the user scrolls!
+  const mergeTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#frame-4",
+      start: "top top", // Triggers the exact moment Frame 4 touches the top of the monitor
+      end: "+=150%",    // Keeps the screen pinned for 1.5x the height of the screen
+      pin: true,        // Locks the frame in place
+      scrub: 1,         // Ties the animation directly to the mouse wheel smoothly
+    }
+  });
+
+  mergeTl
+    // Add a tiny buffer so the user has a moment to read before it merges
+    .to({}, { duration: 0.1 })
+    
+    // The 4 boxes shrink and melt away into the background
+    .to(".grid-card", {
+      scale: 0.85,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.05, 
+      ease: "power2.inOut"
+    })
+    
+    // The Master Box expands and brightens from the exact center
+    .to("#master-box", {
+      scale: 1,
+      opacity: 1,
+      pointerEvents: "auto", // Allow hover interactions once fully expanded
+      duration: 1.2,
+      ease: "power2.out"
+    }, "<0.3") // The "<0.3" tells GSAP to start this halfway through the melting animation
+    
+    // The "AIDEN Calendar" header slides up
+    .to(".master-anim-header", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.6") // Start slightly before the box expansion finishes
+    
+    // The paragraph texts elegantly stagger upwards right after the header
+    .to(".master-anim-text", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2, // Cascades the paragraphs nicely
+      ease: "power3.out"
+    }, "-=0.5");
 
 }); // <-- Final closing bracket for DOMContentLoaded
