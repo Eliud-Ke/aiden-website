@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIDEN // Autonomous Interface</title>
+  </head>
+  <body
+    class="bg-[#000000] text-white min-h-screen w-full overflow-x-hidden font-sans antialiased selection:bg-zinc-800"
+  >
+    <!-- 1. FIXED CANVAS LAYER -->
+    <div
+      class="fixed inset-0 w-full h-screen z-0 pointer-events-none overflow-hidden"
+    >
+      <img
+        id="hero-image"
+        src="/first frame.png"
+        alt="AIDEN Visual Identity"
+        class="absolute top-0 left-0 w-full h-[120vh] object-cover object-right opacity-0 transform"
+      />
+      <div
+        class="absolute inset-0 bg-linear-to-r from-[#000000] via-[#000000]/40 to-transparent w-full h-full"
+      ></div>
+
+      <div
+        id="scroll-fade"
+        class="absolute inset-0 bg-linear-to-t from-black via-black/95 to-transparent translate-y-1/4 opacity-0"
+      ></div>
+    </div>
+
+    <!-- 2. ABSOLUTE TOOLTIP LAYER -->
+    <div
+      id="trait-tooltip"
+      class="fixed pointer-events-none opacity-0 flex flex-col items-center z-50 transform -translate-x-1/2"
+    >
+      <div class="liquid-glass-panel px-6 py-5 w-72 text-center">
+        <h3
+          id="tooltip-title"
+          class="text-white text-xs md:text-sm font-bold uppercase tracking-[0.2em] mb-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+        ></h3>
+        <p
+          id="tooltip-desc"
+          class="text-zinc-300 text-xs md:text-[13px] leading-relaxed tracking-wide font-medium"
+        ></p>
+      </div>
+    </div>
+
+    <!-- 3. SCROLLING CONTENT LAYER -->
+    <div class="relative w-full z-10 flex flex-col">
+      <!-- PILL TRACK -->
+      <div class="w-full h-[70vh] relative z-30 pointer-events-none">
+        <header
+          id="block-1"
+          class="sticky top-6 w-full flex justify-center items-center opacity-0 pointer-events-auto"
+        >
+          <nav
+            id="nav-pill"
+            class="liquid-glass flex items-center gap-5 px-8 py-3.5 text-[10px] md:text-xs uppercase tracking-[0.25em] text-white font-medium"
+          >
+            <div id="pill-glow" class="liquid-spotlight"></div>
+            <span
+              class="trait-node relative z-10"
+              data-title="Transparent"
+              data-desc="Clear. Shows its intentions and exact thinking process before it acts."
+              >Transparent</span
+            >
+            <span class="relative z-10 text-zinc-500 select-none">•</span>
+            <span
+              class="trait-node relative z-10"
+              data-title="Personal"
+              data-desc="It learns and remembers. It knows you as well as you know it."
+              >Personal</span
+            >
+            <span class="relative z-10 text-zinc-500 select-none">•</span>
+            <span
+              class="trait-node relative z-10"
+              data-title="Agentic"
+              data-desc="Performs and reasons through complex tasks just like a human agent would."
+              >Agentic</span
+            >
+            <span class="relative z-10 text-zinc-500 select-none">•</span>
+            <span
+              class="trait-node relative z-10"
+              data-title="Autonomous"
+              data-desc="Like a ghost in your machine doing magic in the background."
+              >Autonomous</span
+            >
+            <span class="relative z-10 text-zinc-500 select-none">•</span>
+            <span
+              class="trait-node relative z-10"
+              data-title="Efficient"
+              data-desc="Makes running complex, agentic workflows fast, effortless, and cheap."
+              >Efficient</span
+            >
+          </nav>
+        </header>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- THE TRANSITION TRACK                           -->
+      <!-- ============================================== -->
+      <div id="transition-track" class="relative w-full z-20">
+        <div
+          id="master-pin"
+          class="relative w-full flex flex-col pt-8 h-screen overflow-hidden"
+        >
+          <!-- TITLE -->
+          <main class="w-full z-20 pointer-events-none shrink-0">
+            <div
+              id="block-2"
+              class="max-w-2xl px-8 md:px-16 opacity-0 pointer-events-auto"
+            >
+              <p
+                class="text-xs md:text-sm uppercase tracking-[0.2em] text-zinc-400 font-mono mb-3"
+              >
+                System Protocol // Desktop Core
+              </p>
+              <h1
+                class="glow-hover text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-zinc-200 uppercase select-none cursor-pointer"
+              >
+                Aiden Assistant
+              </h1>
+            </div>
+          </main>
+
+          <!-- TRANSITION TEXT & TERMINAL -->
+          <section
+            id="text-block"
+            class="relative z-10 w-full px-8 md:px-16 mt-[4vh] flex flex-col lg:flex-row items-center justify-between gap-12"
+          >
+            <!-- LEFT COLUMN: The Text -->
+            <div class="w-full lg:w-1/2 max-w-2xl">
+              <div class="shimmer-card p-8 -ml-8">
+                <div class="shimmer-border"></div>
+                <div
+                  class="relative z-10 space-y-4 text-zinc-400 text-lg leading-normal font-medium"
+                >
+                  <p
+                    class="glow-heading text-zinc-300 text-2xl font-semibold mb-4 uppercase tracking-widest"
+                  >
+                    More Than a Conversation
+                  </p>
+                  <p>Most AI stops at the chat window. Aiden doesn't.</p>
+                  <p>
+                    Built to operate directly on your computer, Aiden goes
+                    beyond generating answers—it understands your workspace,
+                    interacts with your applications, organizes information, and
+                    carries out real tasks for you.
+                  </p>
+                  <p>
+                    Instead of forcing you to manage dozens of apps, files, and
+                    workflows, Aiden brings everything together into a single
+                    intelligent system for you. Give it a goal, and it
+                    determines the steps, selects the right tools, and executes
+                    them with precision—all while keeping you informed every
+                    step of the way.
+                  </p>
+                  <p>
+                    It works quietly in the background, handling the complexity
+                    for you, so you can stay focused on what matters most.
+                  </p>
+                  <p class="glow-heading text-zinc-300 pt-2">
+                    It isn't just designed to respond.<br />
+                    It's designed to get things done—for you.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN: The Live Terminal -->
+            <div class="w-full lg:w-1/2 max-w-2xl">
+              <div
+                class="terminal-glass rounded-xl overflow-hidden border border-zinc-700/50 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+              >
+                <!-- Terminal Header -->
+                <div
+                  class="bg-zinc-900/80 px-4 py-3 flex items-center gap-2 border-b border-zinc-800"
+                >
+                  <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                </div>
+
+                <!-- Terminal Body -->
+                <div
+                  id="terminal-logs"
+                  class="p-6 pb-8 font-mono text-xs md:text-sm text-zinc-300 space-y-2"
+                >
+                  <p class="log-line opacity-0 text-zinc-500">
+                    pygame 2.6.1 (SDL 2.28.4, Python 3.12.9)
+                  </p>
+                  <p class="log-line opacity-0 text-zinc-500">
+                    Hello from the pygame community.
+                    https://www.pygame.org/contribute.html
+                  </p>
+                  <p class="log-line opacity-0">
+                    <span class="text-blue-400">>> [SYSTEM]</span> Initializing
+                    Neural Ears...
+                  </p>
+                  <p class="log-line opacity-0">
+                    <span class="text-blue-400">>> [SYSTEM]</span> Neural Ears
+                    Online (Cloud STT Mode).
+                  </p>
+                  <p class="log-line opacity-0">
+                    <span class="text-blue-400">>> [SYSTEM]</span> Spinning up
+                    Local Wake-Word Engine...
+                  </p>
+                  <p class="log-line opacity-0 text-zinc-400">
+                    [Wake Word Thread] Loading OpenWakeWord model from:
+                    'models/aiden.onnx'...
+                  </p>
+                  <p class="log-line opacity-0">
+                    <span class="text-blue-400">>> [SYSTEM]</span> Booting
+                    Autonomic Nervous System (ANS)...
+                  </p>
+                  <p class="log-line opacity-0">
+                    🧠 <span class="text-purple-400">[ANS]</span> Autonomic
+                    Nervous System Online. Monitoring vitals every 5 seconds...
+                  </p>
+                  <p class="log-line opacity-0">
+                    💎 <span class="text-blue-400">[SYSTEM]</span> Trackpad wake
+                    listeners active (Live Mode Only).
+                  </p>
+                  <p class="log-line opacity-0 text-green-400">
+                    🟢 Boot Sequence: Core Logic Online. Awaiting Hardware
+                    Wake...
+                  </p>
+                  <p class="log-line opacity-0 text-green-400 mt-4">
+                    ✅ Wake Word Engine Online! Running in background...
+                  </p>
+                  <p class="log-line opacity-0 text-zinc-400 mt-4">
+                    [Wake Word Thread] 🗣️ Listening for 'Aiden'...
+                  </p>
+
+                  <!-- The Live Confidence Line -->
+                  <p
+                    id="live-confidence-line"
+                    class="log-line opacity-0 text-yellow-400 mt-2"
+                  >
+                    Live Confidence: <span id="confidence-number">0.0000</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- THE BOTTOM BLACK BLUR MASK -->
+          <div
+            class="absolute bottom-0 left-0 w-full h-48 bg-linear-to-t from-black via-black/80 to-transparent z-30 pointer-events-none"
+          ></div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- FRAME 2: THE BRAIN ARCHITECTURE                -->
+      <!-- ============================================== -->
+      <section
+        id="frame-2"
+        class="relative w-full h-screen z-30 overflow-hidden bg-black"
+      >
+        <!-- TOP BLACK BLUR MASK -->
+        <div
+          class="absolute top-0 left-0 w-full h-24 bg-linear-to-b from-black via-black/80 to-transparent z-10 pointer-events-none"
+        ></div>
+
+        <!-- BOTTOM BLACK BLUR MASK (Short height, placed strictly behind the cards) -->
+        <div
+          class="absolute bottom-0 left-0 w-full h-24 bg-linear-to-t from-black via-black/90 to-transparent z-10 pointer-events-none"
+        ></div>
+
+        <!-- The Center Image -->
+        <img
+          id="frame-2-image"
+          src="/second frame.png"
+          alt="Aiden Core Architecture"
+          class="absolute inset-0 w-full h-full object-cover z-0 opacity-90 mix-blend-screen"
+        />
+
+        <!-- Vignette Overlay -->
+        <div
+          class="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.8)_100%)] pointer-events-none"
+        ></div>
+
+        <!-- THE PARTICLE CANVAS -->
+        <canvas
+          id="particle-canvas"
+          class="absolute inset-0 w-full h-full z-10 pointer-events-none"
+        ></canvas>
+
+        <!-- THE DARK FOCUS OVERLAY -->
+        <div
+          id="frame-2-overlay"
+          class="absolute inset-0 bg-black/10 backdrop-blur-md z-30 opacity-0 pointer-events-none"
+        ></div>
+
+        <!-- THE 4 COGNITIVE MODULES -->
+
+        <!-- TOP LEFT: ANS -->
+        <div
+          class="brain-card module-tl absolute top-8 left-8 md:top-16 md:left-16 z-40 w-80 md:w-96 cursor-pointer"
+        >
+          <button
+            aria-label="Close expanded view"
+            title="Close"
+            class="card-close absolute top-6 right-6 text-zinc-400 hover:text-white opacity-0 pointer-events-none transition-colors z-50"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+
+          <div class="flex items-center gap-3 mb-3 relative z-10">
+            <div
+              class="w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_rgba(96,165,250,1)]"
+            ></div>
+            <p
+              class="text-white text-sm md:text-base font-black uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            >
+              Autonomic Nervous System
+            </p>
+          </div>
+
+          <div class="short-desc">
+            <p
+              class="text-zinc-200 font-medium text-xs md:text-sm leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] relative z-10"
+            >
+              The background life-support. Continuously monitors system vitals,
+              tracks active window states, and maintains awareness without
+              requiring active prompts.
+            </p>
+          </div>
+
+          <div
+            class="expanded-content hidden opacity-0 relative z-10 mt-6 space-y-4 max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar"
+          >
+            <div>
+              <p
+                class="text-blue-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                What it is
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                Think of it as Aiden's subconscious mind. It is a background
+                awareness system that gives her a constant, real-time
+                understanding of what is happening on your computer at any given
+                moment.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-blue-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                How it does things
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                It quietly monitors environmental variables in the
+                background—like the current time, which specific windows and
+                programs you currently have active, and underlying system
+                telemetry. Because she already knows the exact state of your
+                workspace, she can jump in and execute tasks without you ever
+                having to bring her up to speed.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOP RIGHT: Temporal Context -->
+        <div
+          class="brain-card module-tr absolute top-8 right-8 md:top-16 md:right-16 z-40 w-80 md:w-96 cursor-pointer"
+        >
+          <button
+            aria-label="Close expanded view"
+            title="Close"
+            class="card-close absolute top-6 right-6 text-zinc-400 hover:text-white opacity-0 pointer-events-none transition-colors z-50"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+
+          <div class="flex items-center gap-3 mb-3 relative z-10">
+            <div
+              class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,1)]"
+            ></div>
+            <p
+              class="text-white text-sm md:text-base font-black uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            >
+              Temporal Context
+            </p>
+          </div>
+
+          <div class="short-desc">
+            <p
+              class="text-zinc-200 font-medium text-xs md:text-sm leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] relative z-10"
+            >
+              The short-term timeline. Tracks recent interactions, active
+              application switching, and immediate tasks to maintain a flawless
+              execution loop.
+            </p>
+          </div>
+
+          <div
+            class="expanded-content hidden opacity-0 relative z-10 mt-6 space-y-4 max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar"
+          >
+            <div>
+              <p
+                class="text-cyan-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                What it is
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                Think of this as her working memory and conversational
+                continuity. It is the bridge between what you were just talking
+                about, and what you are actively doing right now.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-cyan-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                How it does things
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                It seamlessly fuses two timelines. First, it perfectly catalogs
+                your past chats, allowing her to instantly retrieve the exact
+                details of a previous conversation so you never have to repeat
+                yourself. Second, it holds a temporary context of your immediate
+                workflow. If you suddenly tell her to "fix this," she uses that
+                short-term context to know exactly which file, code, or email
+                you are talking about.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM LEFT: Persistent Memory -->
+        <div
+          class="brain-card module-bl absolute bottom-8 left-8 md:bottom-16 md:left-16 z-40 w-80 md:w-96 cursor-pointer"
+        >
+          <button
+            aria-label="Close expanded view"
+            title="Close"
+            class="card-close absolute top-6 right-6 text-zinc-400 hover:text-white opacity-0 pointer-events-none transition-colors z-50"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+
+          <div class="flex items-center gap-3 mb-3 relative z-10">
+            <div
+              class="w-2 h-2 rounded-full bg-purple-400 animate-pulse shadow-[0_0_10px_rgba(192,132,252,1)]"
+            ></div>
+            <p
+              class="text-white text-sm md:text-base font-black uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            >
+              Persistent Memory
+            </p>
+          </div>
+
+          <div class="short-desc">
+            <p
+              class="text-zinc-200 font-medium text-xs md:text-sm leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] relative z-10"
+            >
+              The permanent archive. Stores learned workflow architectures,
+              custom script configurations, and historical user habits, growing
+              smarter over time.
+            </p>
+          </div>
+
+          <div
+            class="expanded-content hidden opacity-0 relative z-10 mt-6 space-y-4 max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar"
+          >
+            <div>
+              <p
+                class="text-purple-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                What it is
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                This is her long-term foundation. Instead of treating every day
+                like a blank slate, this system ensures she remembers who you
+                are, how you work, and what matters most to you—transforming her
+                from a generic tool into a deeply personalized assistant.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-purple-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                How it does things
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                It quietly logs short, secure entries of your core preferences,
+                likes, dislikes, and recurring habits. By keeping these critical
+                pieces of long-term memory in check, she doesn't just answer
+                your questions; she anticipates your needs and tailors every
+                interaction to fit your unique workflow over time.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM RIGHT: Behavioral Matrix -->
+        <div
+          class="brain-card module-br absolute bottom-8 right-8 md:bottom-16 md:right-16 z-40 w-80 md:w-96 cursor-pointer"
+        >
+          <button
+            aria-label="Close expanded view"
+            title="Close"
+            class="card-close absolute top-6 right-6 text-zinc-400 hover:text-white opacity-0 pointer-events-none transition-colors z-50"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+
+          <div class="flex items-center gap-3 mb-3 relative z-10">
+            <div
+              class="w-2 h-2 rounded-full bg-rose-400 animate-pulse shadow-[0_0_10px_rgba(251,113,133,1)]"
+            ></div>
+            <p
+              class="text-white text-sm md:text-base font-black uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            >
+              Behavioral Matrix
+            </p>
+          </div>
+
+          <div class="short-desc">
+            <p
+              class="text-zinc-200 font-medium text-xs md:text-sm leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] relative z-10"
+            >
+              The human translation layer. Synthesizes tone, adapts to
+              communication styles, and governs overall likeness to ensure
+              natural interaction.
+            </p>
+          </div>
+
+          <div
+            class="expanded-content hidden opacity-0 relative z-10 mt-6 space-y-4 max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar"
+          >
+            <div>
+              <p
+                class="text-rose-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                What it is
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                This is her personality engine. It is the dedicated layer
+                designed to bring energy, warmth, and a natural human touch to
+                your interactions, entirely stripping away the cold, rigid feel
+                of traditional AI.
+              </p>
+            </div>
+            <div>
+              <p
+                class="text-rose-400 font-bold uppercase tracking-wider text-xs mb-1"
+              >
+                How it does things
+              </p>
+              <p class="text-zinc-200 text-sm md:text-base leading-relaxed">
+                By working in constant sync with the Autonomic Nervous System,
+                she essentially "reads the room." She dynamically tailors her
+                tone and responses to bring the right energy exactly where it is
+                needed. This seamless blend of system awareness and dynamic
+                personality removes the roboticness, making her feel like a
+                genuine collaborator.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- FRAME 3: THE NEXT CHAPTER                      -->
+      <!-- ============================================== -->
+      <section
+        id="frame-3"
+        class="relative w-full h-screen z-30 overflow-hidden bg-black"
+      >
+        <!-- TOP BLACK BLUR MASK (Seamless blend from Frame 2) -->
+        <div
+          class="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-black via-black/90 to-transparent z-10 pointer-events-none"
+        ></div>
+
+        <!-- NEW: BOTTOM BLACK BLUR MASK (Seamless blend into Frame 4) -->
+        <div
+          class="absolute bottom-0 left-0 w-full h-48 bg-linear-to-t from-black via-black/90 to-transparent z-10 pointer-events-none"
+        ></div>
+
+        <!-- The Frame 3 Image -->
+        <img
+          id="frame-3-image"
+          src="/Third Frame.png"
+          alt="Aiden Capabilities"
+          class="absolute inset-0 w-full h-full object-cover z-0 opacity-90 mix-blend-screen"
+        />
+
+        <!-- Vignette Overlay -->
+        <div
+          class="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.9)_100%)] pointer-events-none"
+        ></div>
+
+        <!-- ============================================== -->
+        <!-- NEW: FRAME 3 UI CONTENT                        -->
+        <!-- ============================================== -->
+        <div
+          class="relative z-40 w-full h-full flex flex-col justify-center px-8 md:px-16"
+        >
+          <div id="f3-text-block" class="max-w-2xl">
+            <!-- Huge Title -->
+            <h2
+              class="f3-stagger glow-hover w-fit cursor-pointer text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-zinc-200 uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] mb-2"
+            >
+              What can I do?
+            </h2>
+
+            <!-- Slightly Smaller Subtitle -->
+            <h3
+              class="f3-stagger text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-300 mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
+            >
+              Glad you asked.
+            </h3>
+
+            <!-- The Shimmer Card wrapping the description and integrations -->
+            <div
+              class="f3-stagger shimmer-card p-6 md:p-8 -ml-6 md:-ml-8 rounded-2xl"
+            >
+              <div class="shimmer-border"></div>
+              <div class="relative z-10">
+                <!-- Description -->
+                <p
+                  class="text-zinc-400 text-lg md:text-xl leading-relaxed mb-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-medium"
+                >
+                  I operate far beyond a simple chat box. By natively weaving
+                  myself into your local hard drive and daily software, I
+                  transform your scattered applications into a single, fluid
+                  intelligence working on your behalf.
+                </p>
+
+                <!-- App Integrations -->
+                <div class="flex flex-wrap gap-4 mb-8">
+                  <div class="liquid-glass px-6 py-3 flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                    <span
+                      class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-100"
+                      >Mail</span
+                    >
+                  </div>
+                  <div class="liquid-glass px-6 py-3 flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-rose-400"></div>
+                    <span
+                      class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-100"
+                      >Calendar</span
+                    >
+                  </div>
+                  <div class="liquid-glass px-6 py-3 flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-zinc-300"></div>
+                    <span
+                      class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-100"
+                      >Notion</span
+                    >
+                  </div>
+                  <div class="liquid-glass px-6 py-3 flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
+                    <span
+                      class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-100"
+                      >File Management</span
+                    >
+                  </div>
+                </div>
+
+                <!-- NEW: Toolset Summary Paragraph -->
+                <div class="pt-6 border-t border-zinc-800/50">
+                  <p
+                    class="text-zinc-500 text-sm md:text-base leading-relaxed font-medium"
+                  >
+                    Equipped with a comprehensive native toolset, I maintain
+                    full command over your desktop environment. I can navigate
+                    local file systems, draft Office documents, and conduct deep
+                    web research in real-time. Whether it is managing
+                    communications, controlling system media, or using active
+                    vision to analyze your screen state, every capability is
+                    unified into one continuous workflow.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- FRAME 4: THE PLANNER (Calendar & Mail)         -->
+      <!-- ============================================== -->
+      <section
+        id="frame-4"
+        class="relative w-full h-screen z-40 overflow-hidden bg-black"
+      >
+        <!-- TOP BLACK BLUR MASK (Seamless blend from Frame 3) -->
+        <div
+          class="absolute top-0 left-0 w-full h-48 bg-linear-to-b from-black via-black/90 to-transparent z-10 pointer-events-none"
+        ></div>
+
+        <!-- Subtle ambient backdrop glow -->
+        <div
+          class="absolute inset-0 bg-blue-500/10 blur-[120px] z-0 pointer-events-none"
+        ></div>
+
+        <!-- The Frame 4 Image (Now perfectly matches Frame 2 and 3 setup) -->
+        <img
+          id="frame-4-image"
+          src="/aiden planner.png"
+          alt="Aiden Planner Interface"
+          class="absolute inset-0 w-full h-full object-cover z-0 f4-reveal opacity-0 translate-y-10"
+        />
+      </section>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

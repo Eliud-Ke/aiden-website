@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+/* 1. Main Title Glow: Pure white, fast in, slow out */
+.glow-hover {
+  /* This base transition controls the FADE OUT when the mouse leaves */
+  transition: text-shadow 1.2s cubic-bezier(0.16, 1, 0.3, 1), color 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glow-hover:hover {
+  color: #ffffff;
+  /* Stacked pure white shadows (no blue values) */
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.75), 0 0 50px rgba(255, 255, 255, 0.4);
+  /* This hover transition controls the FADE IN when the mouse enters */
+  transition: text-shadow 0.2s ease-out, color 0.2s ease-out;
+}
+
+/* 2. Top row expanding trait animations */
+.trait-node {
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+.trait-node:hover {
+  color: #ffffff;
+  transform: scale(1.15); /* Magnifies the text by 15% */
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.5); 
+}
+
+/* 3. Liquid Glass Pill Effect - OPACITY TRICK APPLIED */
+.liquid-glass {
+  position: relative;
+  overflow: hidden;
+  
+  /* The dark translucent background */
+  background: rgba(18, 18, 18, 0.75); 
+  
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  
+  /* CHANGED: Replaced the dark shadow with a persistent soft white glow */
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 
+    inset 0 -4px 8px 0 rgba(0, 0, 0, 0.5), 
+    0 0 20px 2px rgba(255, 255, 255, 0.7); /* The ambient glow */
+  
+  transition: border 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* NEW: The ambient glow intensifies slightly when you hover anywhere on the pill */
+.liquid-glass:hover {
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 
+    inset 0 -4px 8px 0 rgba(0, 0, 0, 0.5), 
+    0 0 30px 4px rgba(255, 255, 255, 0.2);
+}
+
+/* Liquid Glass Panel (For Tooltips) - OPACITY TRICK APPLIED */
+.liquid-glass-panel {
+  /* CHANGED: Replaced flat background with a gradient that glows white from the center out */
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, rgba(18, 18, 18, 0.6) 100%); 
+  
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.75); /* Slightly brighter border */
+  
+  box-shadow: 
+    inset 0 0 30px 0 rgba(255, 255, 255, 0.15), /* NEW: Deep inner white glow illuminating the background */
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3), 
+    inset 0 -4px 8px 0 rgba(0, 0, 0, 0.5), 
+    0 8px 30px -4px rgba(0, 0, 0, 0.8),
+    0 0 30px 4px rgba(255, 255, 255, 0.3); /* Boosted the outer glow to match */
+    
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+/* Dynamic Spotlight (Tracks Mouse) */
+.liquid-spotlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  /* CHANGED: Increased the canvas size of the spotlight */
+  width: 200px;
+  height: 200px;
+  
+  /* CHANGED: Increased the brightness from 0.1 to 0.5 and the radius to 100px */
+  background: radial-gradient(circle 100px at center, rgba(255,255,255,0.5) 0%, transparent 100%);
+  
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+}
+
+/* 4. Elite Shimmer Border Effect */
+.shimmer-card {
+  position: relative;
+}
+
+/* 4. Mouse-Tracking Border Glow Effect */
+.shimmer-card {
+  position: relative;
+  /* Default coordinates before the mouse enters */
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+
+/* The hollow border mask */
+.shimmer-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem;
+  padding: 1px; /* Thickness of the glow line */
+  
+  /* Hides the inside of the box, leaving only the 1px border visible */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.shimmer-card:hover .shimmer-border {
+  opacity: 1;
+}
+
+/* The actual "flashlight" following the mouse */
+.shimmer-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px; /* Slightly overlaps to ensure the border gets full light */
+  background: radial-gradient(
+    800px circle at var(--mouse-x) var(--mouse-y), 
+    rgba(255, 255, 255, 0.6) 0%, 
+    transparent 80%
+  );
+}
+/* 5. Text Glow on Hover */
+.shimmer-card p {
+  transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+/* When hovering over the card, the body text brightens and gets a soft glow */
+.shimmer-card:hover p {
+  color: #e4e4e7; /* Brightens to zinc-200 */
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* The title and sign-off glow even brighter */
+.shimmer-card:hover p.glow-heading {
+  color: #ffffff; /* Brightens to pure white */
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+/* 6. Terminal Glass UI */
+.terminal-glass {
+  background: rgba(10, 10, 10, 0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02), 0 0 40px rgba(0, 0, 0, 0.8);
+  
+  /* NEW: Smooth animation physics for when you hover and un-hover */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+  transform-origin: center; /* Ensures it scales outward from the middle */
+}
+
+/* NEW: The Hover Effect */
+.terminal-glass:hover {
+  /* Expands exactly to 107% */
+  transform: scale(1.07);
+  
+  /* Swaps the dark shadow for a bright white background glow, 
+     and slightly brightens the inner screen reflection */
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05), 0 0 60px rgba(255, 255, 255, 0.55);
+}
+
+/* 7. Frame 2 Brain Cards */
+.brain-card {
+  /* REMOVED: position: relative; (This was killing the absolute corners!) */
+  padding: 2rem; 
+  border-radius: 1rem;
+  background: rgba(10, 10, 10, 0.6);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    inset 0 0 20px rgba(255, 255, 255, 0.05), 
+    0 0 30px rgba(255, 255, 255, 0.75);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden; 
+}
+
+/* The Internal Hover Glow */
+.brain-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(255, 255, 255, 0.15), 
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.brain-card:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    inset 0 0 20px rgba(255, 255, 255, 0.1), 
+    0 0 45px rgba(255, 255, 255, 0.9);
+}
+
+.brain-card:hover::before {
+  opacity: 1; 
+}
+
+/* 8. Custom Glass Scrollbar for Expanded Cards */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* Super thin and sleek */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05); /* Very faint track */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white thumb */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5); /* Brightens when you hover over the scrollbar */
+}
