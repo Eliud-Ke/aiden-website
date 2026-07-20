@@ -310,3 +310,42 @@ p.master-text {
     0 0 15px rgba(255, 255, 255, 0.8), 
     0 0 30px rgba(255, 255, 255, 0.4) !important;
 }
+
+/* 11. Frame 4 Planner Cards */
+.planner-card {
+  position: relative;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+}
+
+.planner-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+}
+
+.planner-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.planner-header, .planner-text {
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+/* FIX: Added empty-card-wrapper-mail so the new mail cards get the white glow too! */
+.entrance-card:hover .planner-header,
+.empty-card-wrapper:hover .planner-header,
+.empty-card-wrapper-mail:hover .planner-header {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.entrance-card:hover .planner-text,
+.empty-card-wrapper:hover .planner-text,
+.empty-card-wrapper-mail:hover .planner-text {
+  color: #e4e4e7;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}

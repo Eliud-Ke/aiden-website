@@ -516,9 +516,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   
   // 1. The Entrance Animation (Bottom-Up)
-  // FIX: We now animate the '.entrance-card' wrapper so it doesn't fight the melt animation!
   gsap.set(".entrance-card", { opacity: 0, y: 60 });
+  
+  // Set up Calendar elements
   gsap.set([".master-anim-header", ".master-anim-text"], { opacity: 0, y: 40 });
+  gsap.set(".how-do-i-text", { opacity: 0, y: 30 });
+  gsap.set(".empty-card-wrapper", { opacity: 0, scale: 0.85, pointerEvents: "none" }); 
+  
+  // Set up Mail elements
+  gsap.set([".master-anim-header-mail", ".master-anim-text-mail"], { opacity: 0, y: 40 });
+  gsap.set(".how-do-i-text-mail", { opacity: 0, y: 30 });
+  gsap.set(".empty-card-wrapper-mail", { opacity: 0, scale: 0.85, pointerEvents: "none" });
 
   const f4EntranceTl = gsap.timeline({
     scrollTrigger: {
@@ -537,15 +545,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // 2. The Pin & Merge Animation
-  // Start the new elements hidden
-  gsap.set(".how-do-i-text", { opacity: 0, y: 30 });
-  gsap.set(".empty-card-wrapper", { opacity: 0, scale: 0.85 });
-
   const mergeTl = gsap.timeline({
     scrollTrigger: {
       trigger: "#frame-4",
       start: "top top", 
-      end: "+=300%",    // Increased from 150% to 300% to stretch the scrolling out!
+      end: "+=800%",    
       pin: true,        
       scrub: 1,         
     }
@@ -554,6 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
   mergeTl
     // Phase 1: Melt the original boxes and expand the Master Box
     .to({}, { duration: 0.1 })
+    .to(".entrance-card", { pointerEvents: "none", duration: 0 }, "<") 
     .to(".grid-card", {
       scale: 0.85,
       opacity: 0,
@@ -583,7 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, "-=0.5")
     
     // Phase 2: Pause for reading, then bring in "How do I do this?"
-    .to({}, { duration: 0.5 }) // A nice scrolling buffer
+    .to({}, { duration: 0.5 })
     .to(".how-do-i-text", {
       y: 0,
       opacity: 1,
@@ -592,20 +597,79 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     
     // Phase 3: Pause again, melt the Master Box, and pop the empty cards
-    .to({}, { duration: 0.6 }) // Give them a moment to absorb the question
+    .to({}, { duration: 0.6 })
     .to("#master-box", {
       scale: 0.85,
       opacity: 0,
-      pointerEvents: "none",
+      pointerEvents: "none", 
       duration: 1.2,
       ease: "power2.inOut"
     })
     .to(".empty-card-wrapper", {
       scale: 1,
       opacity: 1,
+      pointerEvents: "auto", 
       duration: 1,
-      stagger: 0.1, // Creates a beautiful cascading "pop" effect
-      ease: "back.out(1.2)" // Gives them a slight physical bounce as they appear
-    }, "-=0.6"); // Start popping them out while the Master Box is still fading
+      stagger: 0.1, 
+      ease: "back.out(1.2)" 
+    }, "-=0.6") 
+    
+    // Phase 4: Pause, melt the 4 Calendar Detail boxes, and expand Mail Master Box
+    .to({}, { duration: 0.8 }) 
+    .to(".empty-card-wrapper", {
+      scale: 0.85,
+      opacity: 0,
+      pointerEvents: "none", 
+      duration: 1,
+      stagger: 0.05,
+      ease: "power2.inOut"
+    })
+    .to("#master-box-mail", {
+      scale: 1,
+      opacity: 1,
+      pointerEvents: "auto", 
+      duration: 1.2,
+      ease: "power2.out"
+    }, "<0.3") 
+    .to(".master-anim-header-mail", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.6")
+    .to(".master-anim-text-mail", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power3.out"
+    }, "-=0.5")
+    
+    // Phase 5: Pause for reading the Mail box, then bring in "How do I handle your mail?"
+    .to({}, { duration: 0.5 }) 
+    .to(".how-do-i-text-mail", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power3.out"
+    })
+    
+    // Phase 6: Pause again, melt the Mail Master Box, and pop the 4 Mail detail cards
+    .to({}, { duration: 0.6 }) 
+    .to("#master-box-mail", {
+      scale: 0.85,
+      opacity: 0,
+      pointerEvents: "none", // Disable hovers
+      duration: 1.2,
+      ease: "power2.inOut"
+    })
+    .to(".empty-card-wrapper-mail", {
+      scale: 1,
+      opacity: 1,
+      pointerEvents: "auto", // Re-enable hovers for the new grid
+      duration: 1,
+      stagger: 0.1, 
+      ease: "back.out(1.2)" 
+    }, "-=0.6");
 
 }); // <-- Final closing bracket for DOMContentLoaded
