@@ -537,22 +537,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // 2. The Pin & Merge Animation
-  // This completely locks the screen in place while the user scrolls!
+  // Start the new elements hidden
+  gsap.set(".how-do-i-text", { opacity: 0, y: 30 });
+  gsap.set(".empty-card-wrapper", { opacity: 0, scale: 0.85 });
+
   const mergeTl = gsap.timeline({
     scrollTrigger: {
       trigger: "#frame-4",
-      start: "top top", // Triggers the exact moment Frame 4 touches the top of the monitor
-      end: "+=150%",    // Keeps the screen pinned for 1.5x the height of the screen
-      pin: true,        // Locks the frame in place
-      scrub: 1,         // Ties the animation directly to the mouse wheel smoothly
+      start: "top top", 
+      end: "+=300%",    // Increased from 150% to 300% to stretch the scrolling out!
+      pin: true,        
+      scrub: 1,         
     }
   });
 
   mergeTl
-    // Add a tiny buffer so the user has a moment to read before it merges
+    // Phase 1: Melt the original boxes and expand the Master Box
     .to({}, { duration: 0.1 })
-    
-    // The 4 boxes shrink and melt away into the background
     .to(".grid-card", {
       scale: 0.85,
       opacity: 0,
@@ -560,31 +561,51 @@ document.addEventListener("DOMContentLoaded", () => {
       stagger: 0.05, 
       ease: "power2.inOut"
     })
-    
-    // The Master Box expands and brightens from the exact center
     .to("#master-box", {
       scale: 1,
       opacity: 1,
-      pointerEvents: "auto", // Allow hover interactions once fully expanded
+      pointerEvents: "auto", 
       duration: 1.2,
       ease: "power2.out"
-    }, "<0.3") // The "<0.3" tells GSAP to start this halfway through the melting animation
-    
-    // The "AIDEN Calendar" header slides up
+    }, "<0.3")
     .to(".master-anim-header", {
       y: 0,
       opacity: 1,
       duration: 0.8,
       ease: "power3.out"
-    }, "-=0.6") // Start slightly before the box expansion finishes
-    
-    // The paragraph texts elegantly stagger upwards right after the header
+    }, "-=0.6")
     .to(".master-anim-text", {
       y: 0,
       opacity: 1,
       duration: 0.8,
-      stagger: 0.2, // Cascades the paragraphs nicely
+      stagger: 0.2, 
       ease: "power3.out"
-    }, "-=0.5");
+    }, "-=0.5")
+    
+    // Phase 2: Pause for reading, then bring in "How do I do this?"
+    .to({}, { duration: 0.5 }) // A nice scrolling buffer
+    .to(".how-do-i-text", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power3.out"
+    })
+    
+    // Phase 3: Pause again, melt the Master Box, and pop the empty cards
+    .to({}, { duration: 0.6 }) // Give them a moment to absorb the question
+    .to("#master-box", {
+      scale: 0.85,
+      opacity: 0,
+      pointerEvents: "none",
+      duration: 1.2,
+      ease: "power2.inOut"
+    })
+    .to(".empty-card-wrapper", {
+      scale: 1,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.1, // Creates a beautiful cascading "pop" effect
+      ease: "back.out(1.2)" // Gives them a slight physical bounce as they appear
+    }, "-=0.6"); // Start popping them out while the Master Box is still fading
 
 }); // <-- Final closing bracket for DOMContentLoaded

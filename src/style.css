@@ -288,17 +288,25 @@
   transition: color 0.4s ease, text-shadow 0.4s ease;
 }
 
+/* Base State for the paragraphs (Bright Silver) */
+p.master-text {
+  color: #d4d4d8;
+}
+
 .master-hover-group {
   pointer-events: auto; 
 }
 
+/* Title Hover Glow */
 .master-hover-group:hover .master-header {
   color: #ffffff;
   text-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
 }
 
-/* FIX: Firmly targeting the paragraph tag and forcing the white glow override */
+/* Paragraph Hover Glow (Pure White + Double Shadow for max brightness) */
 .master-hover-group:hover p.master-text {
-  color: #e4e4e7 !important;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  text-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.8), 
+    0 0 30px rgba(255, 255, 255, 0.4) !important;
 }
