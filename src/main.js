@@ -20,6 +20,40 @@ if (menuButton && navigation) {
   });
 }
 
+const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!reduceMotion) {
+  smoothScrollLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const targetId = link.getAttribute('href');
+      const target = targetId ? document.querySelector(targetId) : null;
+      if (!target) return;
+
+      event.preventDefault();
+      const start = window.scrollY;
+      const targetY = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 90);
+      const distance = targetY - start;
+      const duration = Math.min(1450, Math.max(650, Math.abs(distance) * 0.72));
+      let startTime;
+
+      const easeInOutCubic = (progress) => progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      const animateScroll = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        window.scrollTo(0, start + distance * easeInOutCubic(progress));
+        if (progress < 1) window.requestAnimationFrame(animateScroll);
+      };
+
+      window.requestAnimationFrame(animateScroll);
+      window.history.pushState(null, '', targetId);
+    });
+  });
+}
+
 const revealItems = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window) {
   const revealObserver = new IntersectionObserver((entries, observer) => {
