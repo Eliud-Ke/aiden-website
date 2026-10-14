@@ -1,351 +1,312 @@
 @import "tailwindcss";
 
-/* 1. Main Title Glow: Pure white, fast in, slow out */
-.glow-hover {
-  /* This base transition controls the FADE OUT when the mouse leaves */
-  transition: text-shadow 1.2s cubic-bezier(0.16, 1, 0.3, 1), color 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glow-hover:hover {
-  color: #ffffff;
-  /* Stacked pure white shadows (no blue values) */
-  text-shadow: 0 0 25px rgba(255, 255, 255, 0.75), 0 0 50px rgba(255, 255, 255, 0.4);
-  /* This hover transition controls the FADE IN when the mouse enters */
-  transition: text-shadow 0.2s ease-out, color 0.2s ease-out;
-}
-
-/* 2. Top row expanding trait animations */
-.trait-node {
-  display: inline-block;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: default;
-}
-.trait-node:hover {
-  color: #ffffff;
-  transform: scale(1.15); /* Magnifies the text by 15% */
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.5); 
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #f1f0ee;
+  background: #0a0b0d;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --page: min(1180px, calc(100% - 96px));
+  --muted: #a4a6a9;
+  --line: rgba(255, 255, 255, 0.12);
+  --accent: #d5b08c;
 }
 
-/* 3. Liquid Glass Pill Effect - OPACITY TRICK APPLIED */
-.liquid-glass {
-  position: relative;
-  overflow: hidden;
-  
-  /* The dark translucent background */
-  background: rgba(18, 18, 18, 0.75); 
-  
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  
-  /* CHANGED: Replaced the dark shadow with a persistent soft white glow */
-  box-shadow: 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 
-    inset 0 -4px 8px 0 rgba(0, 0, 0, 0.5), 
-    0 0 20px 2px rgba(255, 255, 255, 0.7); /* The ambient glow */
-  
-  transition: border 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform;
-}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+body { margin: 0; min-width: 320px; background: #0a0b0d; color: #f1f0ee; }
+body, button, a { font-family: "DM Sans", sans-serif; }
+a { color: inherit; text-decoration: none; }
+button { color: inherit; }
+img { display: block; max-width: 100%; }
+::selection { color: #111; background: #d5b08c; }
+.page-width { width: var(--page); margin-inline: auto; }
 
-/* NEW: The ambient glow intensifies slightly when you hover anywhere on the pill */
-.liquid-glass:hover {
-  border-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), 
-    inset 0 -4px 8px 0 rgba(0, 0, 0, 0.5), 
-    0 0 30px 4px rgba(255, 255, 255, 0.2);
-}
-
-/* Liquid Glass Panel (For Tooltips) - OPACITY TRICK APPLIED */
-.liquid-glass-panel {
-  /* CHANGED: Replaced flat background with a gradient that glows white from the center out */
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, rgba(18, 18, 18, 0.6) 100%); 
-  
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.75); /* Slightly brighter border */
-  
-  box-shadow: 
-    inset 0 0 30px 0 rgba(255, 255, 255, 0.15), /* NEW: Deep inner white glow illuminating the background */
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3), 
-    inset 0 -4px 8px 0 rgba(0, 0, 0, 0.5), 
-    0 8px 30px -4px rgba(0, 0, 0, 0.8),
-    0 0 30px 4px rgba(255, 255, 255, 0.3); /* Boosted the outer glow to match */
-    
-  transform: translateZ(0);
-  will-change: transform, opacity;
-}
-
-/* Dynamic Spotlight (Tracks Mouse) */
-.liquid-spotlight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  
-  /* CHANGED: Increased the canvas size of the spotlight */
-  width: 200px;
-  height: 200px;
-  
-  /* CHANGED: Increased the brightness from 0.1 to 0.5 and the radius to 100px */
-  background: radial-gradient(circle 100px at center, rgba(255,255,255,0.5) 0%, transparent 100%);
-  
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 0;
-}
-
-/* 4. Elite Shimmer Border Effect */
-.shimmer-card {
-  position: relative;
-}
-
-/* 4. Mouse-Tracking Border Glow Effect */
-.shimmer-card {
-  position: relative;
-  /* Default coordinates before the mouse enters */
-  --mouse-x: 50%;
-  --mouse-y: 50%;
-}
-
-/* The hollow border mask */
-.shimmer-border {
-  position: absolute;
-  inset: 0;
-  border-radius: 1.5rem;
-  padding: 1px; /* Thickness of the glow line */
-  
-  /* Hides the inside of the box, leaving only the 1px border visible */
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.shimmer-card:hover .shimmer-border {
-  opacity: 1;
-}
-
-/* The actual "flashlight" following the mouse */
-.shimmer-border::before {
-  content: "";
-  position: absolute;
-  inset: -1px; /* Slightly overlaps to ensure the border gets full light */
-  background: radial-gradient(
-    800px circle at var(--mouse-x) var(--mouse-y), 
-    rgba(255, 255, 255, 0.6) 0%, 
-    transparent 80%
-  );
-}
-/* 5. Text Glow on Hover */
-.shimmer-card p {
-  transition: color 0.5s ease, text-shadow 0.5s ease;
-}
-
-/* When hovering over the card, the body text brightens and gets a soft glow */
-.shimmer-card:hover p {
-  color: #e4e4e7; /* Brightens to zinc-200 */
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
-
-/* The title and sign-off glow even brighter */
-.shimmer-card:hover p.glow-heading {
-  color: #ffffff; /* Brightens to pure white */
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-}
-
-/* 6. Terminal Glass UI */
-.terminal-glass {
-  background: rgba(10, 10, 10, 0.7);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02), 0 0 40px rgba(0, 0, 0, 0.8);
-  
-  /* NEW: Smooth animation physics for when you hover and un-hover */
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
-  transform-origin: center; /* Ensures it scales outward from the middle */
-}
-
-/* NEW: The Hover Effect */
-.terminal-glass:hover {
-  /* Expands exactly to 107% */
-  transform: scale(1.07);
-  
-  /* Swaps the dark shadow for a bright white background glow, 
-     and slightly brightens the inner screen reflection */
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05), 0 0 60px rgba(255, 255, 255, 0.55);
-}
-
-/* 7. Frame 2 Brain Cards */
-.brain-card {
-  /* REMOVED: position: relative; (This was killing the absolute corners!) */
-  padding: 2rem; 
-  border-radius: 1rem;
-  background: rgba(10, 10, 10, 0.6);
-  -webkit-backdrop-filter: blur(16px);
+.site-header {
+  position: absolute; z-index: 20; top: 0; left: 0; display: flex; align-items: center;
+  width: 100%; height: 82px; padding-inline: max(48px, calc((100vw - 1420px) / 2));
+  border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(9, 10, 12, .32);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 
-    inset 0 0 20px rgba(255, 255, 255, 0.05), 
-    0 0 30px rgba(255, 255, 255, 0.75);
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
-  overflow: hidden; 
+}
+.brand { display: inline-flex; align-items: flex-start; gap: 3px; font-family: Manrope, sans-serif; font-size: 16px; font-weight: 800; letter-spacing: .11em; }
+.brand-name { line-height: 1; }
+.brand-trademark { margin-top: -2px; color: var(--accent); font-family: "DM Sans", sans-serif; font-size: 8px; font-weight: 500; letter-spacing: 0; }.primary-nav { display: flex; gap: 36px; margin-inline: auto; color: rgba(246,246,244,.72); font-size: 12px; }
+.primary-nav a, .header-cta, .text-link { transition: color .2s ease; }
+.primary-nav a:hover, .header-cta:hover, .text-link:hover { color: var(--accent); }
+.header-cta { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+.header-cta span { color: var(--accent); font-size: 16px; }
+.menu-toggle { display: none; }
+
+.hero { position: relative; display: flex; min-height: 740px; height: min(880px, 100svh); align-items: center; overflow: hidden; background: #0a0b0d; }
+.hero-image, .closing-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 43%; }
+.hero-image { opacity: .69; animation: hero-arrive 1.1s ease-out both; }
+.hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,9,11,.98) 0%, rgba(8,9,11,.83) 38%, rgba(8,9,11,.22) 75%, rgba(8,9,11,.14) 100%), linear-gradient(0deg, #0a0b0d 0%, transparent 24%, transparent 78%, rgba(8,9,11,.34) 100%); }
+.hero-content { position: relative; z-index: 1; padding-top: 95px; animation: content-arrive .8s .1s both; }
+.eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; color: #c5c5c2; font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(213,176,140,.65); }
+h1, h2, h3, p { margin-top: 0; }
+h1, h2, h3 { font-family: Manrope, sans-serif; }
+.hero h1 { max-width: 850px; margin-bottom: 23px; font-size: clamp(54px, 7.3vw, 96px); font-weight: 500; letter-spacing: -.075em; line-height: .99; }
+.hero h1 span, .section-heading h2 span, .intro h2 span, .workflow h2 span, .closing h2 span { color: #b8b8b5; }
+.hero-copy { max-width: 465px; margin-bottom: 30px; color: #c1c2c2; font-size: 15px; line-height: 1.8; }
+.hero-actions { display: flex; align-items: center; gap: 28px; }
+.button { display: inline-flex; min-height: 47px; align-items: center; justify-content: center; gap: 22px; padding: 0 20px; border-radius: 3px; font-size: 12px; font-weight: 600; transition: background .2s ease, transform .2s ease; }
+.button:hover { transform: translateY(-2px); }
+.button-primary { color: #171513; background: #e5d3bf; }
+.button-primary:hover { background: #f0e4d7; }
+.button span { font-size: 16px; }
+.text-link { display: inline-flex; align-items: center; gap: 11px; color: #e9e7e3; font-size: 12px; }
+.text-link span { color: var(--accent); font-size: 15px; }
+.hero-footnote { display: flex; justify-content: space-between; max-width: 510px; margin-top: 94px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,.2); color: rgba(224,224,220,.65); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+.scroll-cue { position: absolute; right: 48px; bottom: 33px; display: flex; align-items: center; gap: 10px; color: rgba(237,237,233,.7); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.scroll-cue span { width: 28px; height: 1px; background: var(--accent); }
+
+.section-space { padding-block: 126px; }
+.intro { border-bottom: 1px solid var(--line); background: #0a0b0d; }
+.intro-layout { display: grid; grid-template-columns: 1fr 2fr .9fr; align-items: start; gap: 50px; }
+.section-index { margin: 5px 0 0; color: #a2a3a2; white-space: nowrap; }
+.intro-copy { max-width: 710px; }
+.intro h2, .section-heading h2, .workflow h2 { margin: 0; font-size: clamp(38px, 5vw, 60px); font-weight: 500; letter-spacing: -.065em; line-height: 1.12; }
+.intro-copy > p { max-width: 610px; margin: 25px 0 22px; color: var(--muted); font-size: 15px; line-height: 1.9; }
+.intro-note { align-self: end; margin-top: 135px; padding-left: 17px; border-left: 1px solid var(--accent); }
+.intro-note p { margin: 0; color: #e5e3df; font-family: Manrope, sans-serif; font-size: 13px; line-height: 1.8; }
+
+.intelligence { background: #101113; }
+.section-heading { display: grid; grid-template-columns: 1fr 2fr; gap: 50px; margin-bottom: 54px; }
+.section-heading h2 { margin-bottom: 17px; }
+.section-lead { max-width: 500px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.85; }
+.intelligence-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 75px; align-items: center; }
+.image-panel { position: relative; min-width: 0; overflow: hidden; margin: 0; background: #17191b; }
+.image-panel img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+.image-panel:hover img { transform: scale(1.025); }
+.architecture-panel { height: 520px; }
+.architecture-panel img { object-position: center; opacity: .9; }
+.image-panel::after { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(7,8,9,.78), transparent 28%, rgba(5,6,7,.08)); content: ""; pointer-events: none; }
+.image-panel figcaption { position: absolute; z-index: 1; right: 22px; bottom: 19px; left: 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: rgba(243,242,237,.82); font-size: 10px; }
+.image-tag { padding: 7px 9px; border: 1px solid rgba(255,255,255,.26); background: rgba(10,11,12,.34); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+.principles { border-top: 1px solid var(--line); }
+.principle { display: grid; grid-template-columns: 42px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.principle-number, .card-number { color: var(--accent); font-size: 10px; letter-spacing: .12em; }
+.principle h3, .planner-card h3 { margin: 0 0 9px; font-size: 17px; font-weight: 600; letter-spacing: -.03em; }
+.principle p, .planner-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+
+.capabilities { background: #0a0b0d; }
+.capabilities-layout { display: grid; grid-template-columns: .85fr 1.15fr; align-items: center; gap: 80px; }
+.capability-copy { max-width: 450px; }
+.accent-eyebrow { color: var(--accent); }
+.capability-copy h3 { margin: 0 0 17px; font-size: clamp(28px, 3vw, 39px); font-weight: 500; letter-spacing: -.055em; line-height: 1.2; }
+.capability-copy > p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.9; }
+.capability-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; margin-top: 28px; border-top: 1px solid var(--line); }
+.capability-list span { display: flex; align-items: center; gap: 11px; padding: 14px 0; border-bottom: 1px solid var(--line); color: #dededb; font-size: 11px; }
+.capability-list i { color: var(--accent); font-size: 9px; font-style: normal; }
+.capabilities-panel { height: 470px; }
+.capabilities-panel img { object-position: center; }
+
+.workflow { background: #101113; }
+.workflow-layout { display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 90px; }
+.workflow-panel { height: 500px; }
+.workflow-panel img { object-position: center; }
+.workflow-copy { max-width: 500px; }
+.workflow-copy h2 { margin-bottom: 22px; }
+.workflow-copy > p:not(.eyebrow) { color: var(--muted); font-size: 13px; line-height: 1.9; }
+.quote-card { display: flex; gap: 17px; margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--line); }
+.quote-mark { color: var(--accent); font-family: Georgia, serif; font-size: 36px; line-height: .9; }
+.quote-card p { max-width: 280px; margin: 0; color: #dfdedb; font-family: Manrope, sans-serif; font-size: 14px; line-height: 1.7; }
+
+.planner { background: #0a0b0d; }
+.planner-layout { display: grid; grid-template-columns: 1.13fr .87fr; align-items: stretch; gap: 28px; }
+.planner-panel { min-height: 500px; }
+.planner-panel img { object-position: center; }
+.planner-cards { display: flex; flex-direction: column; justify-content: center; border-top: 1px solid var(--line); }
+.planner-card { display: grid; grid-template-columns: 40px 1fr; column-gap: 12px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.planner-card .card-number { grid-row: span 2; padding-top: 4px; }
+.planner-card h3 { margin-bottom: 7px; }
+
+.closing { position: relative; display: flex; min-height: 490px; align-items: center; overflow: hidden; background: #08090b; }
+.closing-image { opacity: .37; object-position: center 45%; }
+.closing-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,9,11,.96), rgba(8,9,11,.55) 60%, rgba(8,9,11,.2)), linear-gradient(0deg,#0a0b0d,transparent 32%,rgba(8,9,11,.2)); }
+.closing-content { position: relative; z-index: 1; padding-block: 95px; }
+.closing h2 { margin: 0 0 27px; font-size: clamp(46px, 6vw, 76px); font-weight: 500; letter-spacing: -.07em; line-height: 1.04; }
+.site-footer { display: flex; min-height: 87px; align-items: center; justify-content: space-between; gap: 20px; padding-inline: max(48px, calc((100vw - 1180px) / 2)); border-top: 1px solid var(--line); background: #0a0b0d; }
+.site-footer p, .copyright { margin: 0; color: #85878a; font-size: 10px; }
+
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+@keyframes hero-arrive { from { transform: scale(1.035); opacity: .35; } to { transform: scale(1); opacity: .69; } }
+@keyframes content-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 850px) {
+  :root { --page: min(100% - 52px, 680px); }
+  .site-header { height: 72px; padding-inline: 26px; }
+  .primary-nav { gap: 19px; }
+  .primary-nav a { font-size: 10px; }
+  .header-cta { font-size: 10px; }
+  .hero { min-height: 690px; height: 88svh; }
+  .hero-image { object-position: 57% center; }
+  .hero-shade { background: linear-gradient(90deg, rgba(8,9,11,.96), rgba(8,9,11,.67) 58%, rgba(8,9,11,.18)), linear-gradient(0deg, #0a0b0d, transparent 30%, rgba(8,9,11,.2)); }
+  .intro-layout { grid-template-columns: 1fr 2.3fr; gap: 25px; }
+  .intro-note { display: none; }
+  .section-heading { gap: 25px; }
+  .intelligence-layout, .capabilities-layout, .workflow-layout, .planner-layout { gap: 38px; }
+  .architecture-panel, .capabilities-panel, .workflow-panel { height: 410px; }
+  .planner-panel { min-height: 430px; }
+}
+@media (max-width: 600px) {
+  :root { --page: calc(100% - 40px); }
+  html { scroll-padding-top: 72px; }
+  .site-header { height: 68px; padding-inline: 20px; }
+  .menu-toggle { display: flex; width: 36px; height: 36px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; margin-left: auto; border: 1px solid var(--line); border-radius: 50%; background: transparent; }
+  .menu-toggle span { width: 13px; height: 1px; background: #eee; transition: transform .2s ease; }
+  .menu-toggle[aria-expanded="true"] span:first-child { transform: translateY(3px) rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3px) rotate(-45deg); }
+  .primary-nav { position: absolute; top: 67px; right: 0; left: 0; display: none; flex-direction: column; gap: 0; padding: 8px 20px 18px; border-bottom: 1px solid var(--line); background: rgba(10,11,13,.97); }
+  .primary-nav.is-open { display: flex; }
+  .primary-nav a { padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.07); font-size: 12px; }
+  .header-cta { display: none; }
+  .hero { min-height: 660px; height: 90svh; max-height: 810px; align-items: flex-end; }
+  .hero-image { object-position: 61% center; }
+  .hero-shade { background: linear-gradient(90deg, rgba(8,9,11,.8), rgba(8,9,11,.2)), linear-gradient(0deg, #0a0b0d 1%, rgba(8,9,11,.78) 35%, rgba(8,9,11,.08) 100%); }
+  .hero-content { padding-top: 0; padding-bottom: 105px; }
+  .eyebrow { font-size: 8px; letter-spacing: .13em; }
+  .hero h1 { font-size: clamp(49px, 14vw, 70px); }
+  .hero-copy { max-width: 360px; font-size: 13px; }
+  .hero-actions { gap: 18px; }
+  .button { min-height: 44px; padding-inline: 14px; font-size: 11px; }
+  .hero-actions .text-link { font-size: 10px; }
+  .hero-footnote { margin-top: 56px; font-size: 7px; }
+  .scroll-cue { right: 20px; bottom: 25px; font-size: 8px; }
+  .section-space { padding-block: 78px; }
+  .intro-layout, .section-heading { grid-template-columns: 1fr; gap: 24px; }
+  .section-index { margin: 0; }
+  .intro h2, .section-heading h2, .workflow h2 { font-size: clamp(36px, 10vw, 48px); }
+  .intro-copy > p { margin-block: 20px; font-size: 13px; }
+  .section-heading { margin-bottom: 34px; }
+  .section-lead { font-size: 12px; }
+  .intelligence-layout, .capabilities-layout, .workflow-layout, .planner-layout { grid-template-columns: 1fr; gap: 30px; }
+  .architecture-panel, .capabilities-panel, .workflow-panel { height: 320px; }
+  .principle { padding-block: 19px; }
+  .capabilities-layout .capabilities-panel { order: -1; }
+  .capability-copy h3 { font-size: 30px; }
+  .workflow-copy { order: -1; }
+  .planner-panel { min-height: 320px; height: 320px; }
+  .planner-cards { margin-top: 2px; }
+  .planner-card { padding-block: 18px; }
+  .closing { min-height: 430px; }
+  .closing-content { padding-block: 75px; }
+  .closing h2 { font-size: clamp(43px, 12vw, 62px); }
+  .site-footer { flex-wrap: wrap; justify-content: space-between; min-height: 90px; padding: 17px 20px; }
+  .site-footer p { order: 3; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .reveal { opacity: 1; transform: none; }
 }
 
-/* The Internal Hover Glow */
-.brain-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-    rgba(255, 255, 255, 0.15), 
-    transparent 40%
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  z-index: 0;
-}
 
-.brain-card:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 
-    inset 0 0 20px rgba(255, 255, 255, 0.1), 
-    0 0 45px rgba(255, 255, 255, 0.9);
-}
-
-.brain-card:hover::before {
-  opacity: 1; 
-}
-
-/* 8. Custom Glass Scrollbar for Expanded Cards */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px; /* Super thin and sleek */
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05); /* Very faint track */
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white thumb */
-  border-radius: 10px;
-  transition: background 0.3s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5); /* Brightens when you hover over the scrollbar */
-}
-
-/* 11. Frame 4 Planner Cards */
-.planner-card {
-  position: relative;
-  /* FIX: Removed 'transform' transition so it stops fighting GSAP scrubbing! */
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+/* Inspiration marquee */
+.inspiration-strip {
   overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #101113;
 }
-
-.planner-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
-  /* FIX: Removed translateY(-4px) to protect the melt animation */
+.inspiration-inner {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 1fr);
+  align-items: center;
+  gap: 38px;
+  min-height: 112px;
 }
-
-.planner-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-  pointer-events: none;
+.inspiration-heading .eyebrow {
+  margin-bottom: 7px;
+  color: var(--accent);
 }
-
-.planner-header, .planner-text {
-  transition: color 0.4s ease, text-shadow 0.4s ease;
+.inspiration-heading p:last-child {
+  margin: 0;
+  color: #85878a;
+  font-size: 10px;
 }
-
-.planner-card:hover .planner-header {
-  color: #ffffff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-}
-
-.planner-card:hover .planner-text {
-  color: #e4e4e7;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
-
-/* 12. Master Box Hover Glow */
-.master-header, p.master-text {
-  transition: color 0.4s ease, text-shadow 0.4s ease;
-}
-
-/* Base State for the paragraphs (Bright Silver) */
-p.master-text {
-  color: #d4d4d8;
-}
-
-.master-hover-group {
-  pointer-events: auto; 
-}
-
-/* Title Hover Glow */
-.master-hover-group:hover .master-header {
-  color: #ffffff;
-  text-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
-}
-
-/* Paragraph Hover Glow (Pure White + Double Shadow for max brightness) */
-.master-hover-group:hover p.master-text {
-  color: #ffffff !important;
-  text-shadow: 
-    0 0 15px rgba(255, 255, 255, 0.8), 
-    0 0 30px rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 11. Frame 4 Planner Cards */
-.planner-card {
-  position: relative;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+.inspiration-marquee {
   overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.inspiration-track {
+  display: flex;
+  width: max-content;
+  animation: inspiration-scroll 34s linear infinite;
+}
+.inspiration-marquee:hover .inspiration-track {
+  animation-play-state: paused;
+}
+.inspiration-set {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: clamp(38px, 5.5vw, 76px);
+  padding-right: clamp(38px, 5.5vw, 76px);
+}
+.inspiration-set span {
+  color: #b9babe;
+  font-family: Manrope, sans-serif;
+  font-size: clamp(14px, 1.45vw, 18px);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  white-space: nowrap;
+}
+.inspiration-set strong {
+  color: #f0efed;
+  font-weight: 700;
+}
+@keyframes inspiration-scroll {
+  to { transform: translateX(-50%); }
 }
 
-.planner-card:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+/* Text-first feature sections after removing the in-between screenshots */
+.intelligence-layout,
+.capabilities-layout,
+.workflow-layout,
+.planner-layout {
+  display: block;
+}
+.principles {
+  max-width: 850px;
+  margin-inline: auto;
+}
+.capability-copy {
+  max-width: 760px;
+}
+.workflow-copy {
+  max-width: 760px;
+}
+.planner-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  max-width: 980px;
+  margin-inline: auto;
+  border-top: 0;
+}
+.planner-card {
+  align-content: start;
+  min-width: 0;
+  padding: 22px 12px 8px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
 }
 
-.planner-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-  pointer-events: none;
+@media (max-width: 700px) {
+  .inspiration-inner {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding-block: 21px 24px;
+  }
+  .inspiration-heading .eyebrow { margin-bottom: 5px; }
+  .inspiration-marquee { margin-inline: -10px; }
+  .inspiration-set { gap: 38px; padding-right: 38px; }
+  .planner-cards { grid-template-columns: 1fr; gap: 0; }
+  .planner-card { padding-block: 18px; }
 }
-
-.planner-header, .planner-text {
-  transition: color 0.4s ease, text-shadow 0.4s ease;
-}
-
-/* FIX: Added empty-card-wrapper-mail so the new mail cards get the white glow too! */
-.entrance-card:hover .planner-header,
-.empty-card-wrapper:hover .planner-header,
-.empty-card-wrapper-mail:hover .planner-header {
-  color: #ffffff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-}
-
-.entrance-card:hover .planner-text,
-.empty-card-wrapper:hover .planner-text,
-.empty-card-wrapper-mail:hover .planner-text {
-  color: #e4e4e7;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+@media (prefers-reduced-motion: reduce) {
+  .inspiration-track { animation: none; }
 }
