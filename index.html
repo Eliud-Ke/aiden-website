@@ -51,9 +51,46 @@
         <a href="#audience">Who it's for</a>
         <a href="#compare">Compare</a>
       </nav>
-      <a class="header-cta" href="#get-started">
-        Get AIDEN <span aria-hidden="true">↗</span>
-      </a>
+      <div class="header-actions">
+        <button
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          aria-label="Switch to light mode"
+          title="Switch theme"
+        >
+          <svg
+            class="theme-icon icon-sun"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4.5"></circle>
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+            ></path>
+          </svg>
+          <svg
+            class="theme-icon icon-moon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <a class="header-cta" href="#get-started">
+          Get AIDEN <span aria-hidden="true">↗</span>
+        </a>
+      </div>
     </header>
 
     <main>
@@ -63,6 +100,7 @@
           <img
             class="hero-image"
             src="/first%20frame.png"
+            data-light-src="/hero-light.jpg"
             alt=""
             fetchpriority="high"
             data-parallax
@@ -282,7 +320,7 @@
                   <div class="deck-progress" aria-hidden="true">
                     <span data-deck-count>01</span> / 03
                     <i><b data-deck-bar></b></i>
-                    <span class="deck-hint">Scroll to explore</span>
+                    <span class="deck-hint" data-deck-hint>Auto-advancing (3s)</span>
                   </div>
                 </div>
 
@@ -292,6 +330,7 @@
                     <div class="vision-slide is-active" data-vision-slide="0">
                       <img
                         src="/deck-eyes.jpg"
+                        data-light-src="/deck-eyes-light.jpg"
                         alt="A glowing figure with luminous eyes looking straight ahead"
                         loading="lazy"
                       />
@@ -299,6 +338,7 @@
                     <div class="vision-slide" data-vision-slide="1">
                       <img
                         src="/deck-hands.jpg"
+                        data-light-src="/deck-hands-light.jpg"
                         alt="A luminous figure in a black slip dress glancing back with a graceful poised hand"
                         loading="lazy"
                       />
@@ -306,6 +346,7 @@
                     <div class="vision-slide" data-vision-slide="2">
                       <img
                         src="/deck-memory.jpg"
+                        data-light-src="/deck-memory-light.jpg"
                         alt="A figure glancing back over her shoulder, layers of memory behind her"
                         loading="lazy"
                       />
@@ -339,7 +380,7 @@
             <div class="pillar-stage" aria-hidden="true">
               <div class="stage-frame">
                 <div class="stage-slide is-active" data-slide="0">
-                  <img src="/aiden-vision.jpg" alt="" loading="lazy" />
+                  <img src="/aiden-vision.jpg" data-light-src="/aiden-vision-light.jpg" alt="" loading="lazy" />
                   <div class="stage-hud glass">
                     <span class="hud-label"
                       ><span class="pulse-dot"></span> Vision · frame
@@ -356,7 +397,7 @@
                   </div>
                 </div>
                 <div class="stage-slide" data-slide="1">
-                  <img src="/aiden-controls.jpg" alt="" loading="lazy" />
+                  <img src="/aiden-controls.jpg" data-light-src="/aiden-controls-light.jpg" alt="" loading="lazy" />
                   <div class="stage-hud glass">
                     <span class="hud-label"
                       ><span class="pulse-dot"></span> System</span
@@ -372,7 +413,7 @@
                   </div>
                 </div>
                 <div class="stage-slide" data-slide="2">
-                  <img src="/aiden-calendar.jpg" alt="" loading="lazy" />
+                  <img src="/aiden-calendar.jpg" data-light-src="/aiden-calendar-light.jpg" alt="" loading="lazy" />
                   <div class="stage-hud glass">
                     <span class="hud-label"
                       ><span class="pulse-dot"></span> Calendar</span
@@ -446,6 +487,7 @@
                 <img
                   class="pillar-inline"
                   src="/aiden-vision.jpg"
+                  data-light-src="/aiden-vision-light.jpg"
                   alt=""
                   loading="lazy"
                 />
@@ -473,6 +515,7 @@
                 <img
                   class="pillar-inline"
                   src="/aiden-controls.jpg"
+                  data-light-src="/aiden-controls-light.jpg"
                   alt=""
                   loading="lazy"
                 />
@@ -509,6 +552,7 @@
                 <img
                   class="pillar-inline"
                   src="/aiden-calendar.jpg"
+                  data-light-src="/aiden-calendar-light.jpg"
                   alt=""
                   loading="lazy"
                 />

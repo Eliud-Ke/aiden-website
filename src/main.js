@@ -2,6 +2,131 @@ import './style.css';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* ---------------- Theme Toggle (Circular Explode) ---------------- */
+const themeButton = document.querySelector('[data-theme-toggle]');
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+const rootEl = document.documentElement;
+
+const applyTheme = (theme) => {
+  const isLight = theme === 'light';
+  if (isLight) {
+    rootEl.setAttribute('data-theme', 'light');
+  } else {
+    rootEl.removeAttribute('data-theme');
+  }
+  if (themeMeta) {
+    themeMeta.setAttribute('content', isLight ? '#f6f2ea' : '#000000');
+  }
+  if (themeButton) {
+    themeButton.setAttribute(
+      'aria-label',
+      isLight ? 'Switch to dark mode' : 'Switch to light mode'
+    );
+    themeButton.setAttribute(
+      'title',
+      isLight ? 'Switch to dark mode' : 'Switch to light mode'
+    );
+  }
+
+  // Seamless light/dark image swap
+  document.querySelectorAll('img[data-light-src]').forEach((img) => {
+    if (!img.dataset.darkSrc) {
+      img.dataset.darkSrc = img.getAttribute('src');
+    }
+    img.src = isLight ? img.dataset.lightSrc : img.dataset.darkSrc;
+  });
+
+  try {
+    localStorage.setItem('aiden-theme', theme);
+  } catch {
+    // ignore storage errors
+  }
+};
+
+// Preload light images for instant zero-flicker transitions
+const preloadLightImages = () => {
+  [
+    '/hero-light.jpg',
+    '/deck-eyes-light.jpg',
+    '/deck-hands-light.jpg',
+    '/deck-memory-light.jpg',
+    '/aiden-vision-light.jpg',
+    '/aiden-controls-light.jpg',
+    '/aiden-calendar-light.jpg',
+  ].forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+};
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'complete') {
+    preloadLightImages();
+  } else {
+    window.addEventListener('load', preloadLightImages);
+  }
+}
+
+try {
+  const savedTheme = localStorage.getItem('aiden-theme');
+  if (savedTheme === 'light') applyTheme('light');
+} catch {
+  // ignore storage errors
+}
+
+if (themeButton) {
+  themeButton.addEventListener('click', (event) => {
+    const isLight = rootEl.getAttribute('data-theme') === 'light';
+    const nextTheme = isLight ? 'dark' : 'light';
+
+    const rect = themeButton.getBoundingClientRect();
+    const x = event.clientX || rect.left + rect.width / 2;
+    const y = event.clientY || rect.top + rect.height / 2;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    if (document.startViewTransition && !reduceMotion) {
+      const transition = document.startViewTransition(() => {
+        applyTheme(nextTheme);
+      });
+      transition.ready.then(() => {
+        rootEl.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${endRadius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration: 680,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            pseudoElement: '::view-transition-new(root)',
+          }
+        );
+      });
+    } else if (!reduceMotion) {
+      const ripple = document.createElement('div');
+      ripple.className = 'theme-ripple';
+      ripple.style.background = nextTheme === 'light' ? '#f6f2ea' : '#000000';
+      ripple.style.setProperty('--rx', `${x}px`);
+      ripple.style.setProperty('--ry', `${y}px`);
+      document.body.appendChild(ripple);
+      // Force layout before expanding circle
+      ripple.getBoundingClientRect();
+      ripple.style.clipPath = `circle(${endRadius}px at ${x}px ${y}px)`;
+      setTimeout(() => {
+        applyTheme(nextTheme);
+        ripple.style.transition = 'opacity 0.25s ease';
+        ripple.style.opacity = '0';
+        setTimeout(() => ripple.remove(), 260);
+      }, 360);
+    } else {
+      applyTheme(nextTheme);
+    }
+  });
+}
+
 /* ---------------- Mobile navigation ---------------- */
 const menuButton = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('.primary-nav');
@@ -113,7 +238,7 @@ if ('IntersectionObserver' in window) {
 }
 
 
-/* ---------------- Eyes / Hands / Memory: cinematic vision transitions ---------------- */
+/* ---------------- Eyes / Hands / Memory: smooth auto-switcher & interactive deck ---------------- */
 const deck = document.querySelector('[data-deck]');
 if (deck) {
   const slides = [...deck.querySelectorAll('[data-vision-slide]')];
@@ -121,111 +246,121 @@ if (deck) {
   const chapters = [...deck.querySelectorAll('[data-deck-jump]')];
   const countEl = deck.querySelector('[data-deck-count]');
   const barEl = deck.querySelector('[data-deck-bar]');
-  let ticking = false;
+  const hintEl = deck.querySelector('[data-deck-hint]');
 
-  const updateStage = (p) => {
-    let op0 = 0, op1 = 0, op2 = 0;
-    let activeIdx = 0;
+  const DURATION = 3200; // ~3.2 seconds per capability
+  let activeIdx = 0;
+  let startTime = null;
+  let rafId = null;
+  let isVisible = false;
+  let isHovered = false;
 
-    // Slide 0: Eyes (Holds steady, then fades out to black)
-    if (p <= 0.22) {
-      op0 = 1;
-      activeIdx = 0;
-    } else if (p < 0.30) {
-      op0 = Math.max(0, 1 - (p - 0.22) / 0.08);
-      activeIdx = 0;
-    }
-
-    // Slide 1: Hands (Fades in from black, holds steady, then fades out to black)
-    if (p >= 0.35 && p <= 0.43) {
-      op1 = Math.min(1, (p - 0.35) / 0.08);
-      activeIdx = 1;
-    } else if (p > 0.43 && p <= 0.63) {
-      op1 = 1;
-      activeIdx = 1;
-    } else if (p > 0.63 && p < 0.71) {
-      op1 = Math.max(0, 1 - (p - 0.63) / 0.08);
-      activeIdx = 1;
-    }
-
-    // Slide 2: Memory (Fades in from black, holds steady, then fades black when done)
-    if (p >= 0.76 && p <= 0.84) {
-      op2 = Math.min(1, (p - 0.76) / 0.08);
-      activeIdx = 2;
-    } else if (p > 0.84 && p <= 0.93) {
-      op2 = 1;
-      activeIdx = 2;
-    } else if (p > 0.93) {
-      // While done it fades black
-      op2 = Math.max(0, 1 - (p - 0.93) / 0.07);
-      activeIdx = 2;
-    }
-
-    // Dead zone resolution for active chapter
-    if (p >= 0.30 && p < 0.35) activeIdx = p >= 0.325 ? 1 : 0;
-    else if (p >= 0.71 && p < 0.76) activeIdx = p >= 0.735 ? 2 : 1;
-
-    const opacities = [op0, op1, op2];
+  const setActive = (index) => {
+    activeIdx = (index + slides.length) % slides.length;
 
     slides.forEach((slide, i) => {
-      const op = opacities[i];
-      slide.style.setProperty('--op', op.toFixed(3));
-      slide.style.setProperty('--sc', (1 + (1 - op) * 0.02).toFixed(3));
-      slide.classList.toggle('is-active', op > 0.1);
+      slide.classList.toggle('is-active', i === activeIdx);
     });
 
     details.forEach((detail, i) => {
-      const isActive = i === activeIdx;
-      detail.classList.toggle('is-active', isActive);
-      if (p > 0.93 && i === 2) {
-        detail.style.opacity = op2.toFixed(3);
-      } else {
-        detail.style.opacity = '';
-      }
+      detail.classList.toggle('is-active', i === activeIdx);
     });
 
     chapters.forEach((btn, i) => {
       btn.classList.toggle('is-active', i === activeIdx);
     });
 
-    if (countEl) countEl.textContent = String(activeIdx + 1).padStart(2, '0');
-    if (barEl) barEl.style.setProperty('--p', p.toFixed(3));
+    if (countEl) {
+      countEl.textContent = String(activeIdx + 1).padStart(2, '0');
+    }
   };
 
-  const renderStage = () => {
-    ticking = false;
-    const rect = deck.getBoundingClientRect();
-    const scrollable = deck.offsetHeight - window.innerHeight;
-    if (scrollable <= 0) return;
-    const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
-    updateStage(progress);
+  const updateProgress = (p) => {
+    if (barEl) {
+      barEl.style.setProperty('--p', p.toFixed(3));
+    }
   };
 
-  const targets = [0.10, 0.53, 0.88];
+  const step = (timestamp) => {
+    if (!isVisible || isHovered || reduceMotion) {
+      startTime = null;
+      return;
+    }
+
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(elapsed / DURATION, 1);
+    updateProgress(progress);
+
+    if (elapsed >= DURATION) {
+      setActive(activeIdx + 1);
+      startTime = timestamp;
+      updateProgress(0);
+    }
+
+    rafId = requestAnimationFrame(step);
+  };
+
+  const startTimer = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    if (!isVisible || isHovered || reduceMotion) return;
+    startTime = null;
+    rafId = requestAnimationFrame(step);
+  };
+
+  const pauseTimer = (paused = true) => {
+    isHovered = paused;
+    if (hintEl) {
+      hintEl.textContent = paused ? 'Paused' : 'Auto-advancing (3s)';
+    }
+    if (paused) {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+    } else {
+      startTimer();
+    }
+  };
+
+  // Chapter pill clicks
   chapters.forEach((btn) => {
     btn.addEventListener('click', () => {
       const idx = Number(btn.dataset.deckJump);
-      const scrollable = deck.offsetHeight - window.innerHeight;
-      if (scrollable > 0) {
-        const deckTop = window.scrollY + deck.getBoundingClientRect().top;
-        const targetY = deckTop + targets[idx] * scrollable;
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
-      } else {
-        updateStage(targets[idx]);
+      setActive(idx);
+      updateProgress(0);
+      startTime = null;
+      if (!isHovered && isVisible && !reduceMotion) {
+        startTimer();
       }
     });
   });
 
-  const requestRender = () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(renderStage);
-    }
-  };
-  window.addEventListener('scroll', requestRender, { passive: true });
-  window.addEventListener('resize', requestRender);
-  updateStage(0);
-  renderStage();
+  // Pause on hover so the user can easily read the active chapter
+  deck.addEventListener('mouseenter', () => pauseTimer(true));
+  deck.addEventListener('mouseleave', () => pauseTimer(false));
+
+  // IntersectionObserver to only auto-advance when section is visible in the viewport
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        isVisible = entry.isIntersecting && entry.intersectionRatio > 0.15;
+        if (isVisible) {
+          startTimer();
+        } else {
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = null;
+          startTime = null;
+        }
+      });
+    }, { threshold: [0, 0.2, 0.5] });
+    observer.observe(deck);
+  } else {
+    isVisible = true;
+    startTimer();
+  }
+
+  // Initialize
+  setActive(0);
+  updateProgress(0);
 }
 
 /* ---------------- Pillars: sticky stage sync ---------------- */
