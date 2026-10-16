@@ -112,43 +112,120 @@ if ('IntersectionObserver' in window) {
   revealItems.forEach((item) => item.classList.add('is-visible'));
 }
 
-/* ---------------- Hero voice-command typer ---------------- */
-const typer = document.querySelector('[data-typer]');
-const heroCommands = [
-  'Aiden, look at this screen — why did the build fail?',
-  'Dim the screen to 40% and play my focus playlist.',
-  'What does my morning look like, and who emailed me?',
-  'Append this idea to my Startup Concepts note.',
-  'Kill the frozen Blender process.',
-];
 
-if (typer && !reduceMotion) {
-  let commandIndex = 0;
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  const type = async (text) => {
-    for (let i = 1; i <= text.length; i += 1) {
-      typer.textContent = text.slice(0, i);
-      await wait(28 + Math.random() * 40);
+/* ---------------- Eyes / Hands / Memory: cinematic vision transitions ---------------- */
+const deck = document.querySelector('[data-deck]');
+if (deck) {
+  const slides = [...deck.querySelectorAll('[data-vision-slide]')];
+  const details = [...deck.querySelectorAll('[data-deck-detail]')];
+  const chapters = [...deck.querySelectorAll('[data-deck-jump]')];
+  const countEl = deck.querySelector('[data-deck-count]');
+  const barEl = deck.querySelector('[data-deck-bar]');
+  let ticking = false;
+
+  const updateStage = (p) => {
+    let op0 = 0, op1 = 0, op2 = 0;
+    let activeIdx = 0;
+
+    // Slide 0: Eyes (Holds steady, then fades out to black)
+    if (p <= 0.22) {
+      op0 = 1;
+      activeIdx = 0;
+    } else if (p < 0.30) {
+      op0 = Math.max(0, 1 - (p - 0.22) / 0.08);
+      activeIdx = 0;
+    }
+
+    // Slide 1: Hands (Fades in from black, holds steady, then fades out to black)
+    if (p >= 0.35 && p <= 0.43) {
+      op1 = Math.min(1, (p - 0.35) / 0.08);
+      activeIdx = 1;
+    } else if (p > 0.43 && p <= 0.63) {
+      op1 = 1;
+      activeIdx = 1;
+    } else if (p > 0.63 && p < 0.71) {
+      op1 = Math.max(0, 1 - (p - 0.63) / 0.08);
+      activeIdx = 1;
+    }
+
+    // Slide 2: Memory (Fades in from black, holds steady, then fades black when done)
+    if (p >= 0.76 && p <= 0.84) {
+      op2 = Math.min(1, (p - 0.76) / 0.08);
+      activeIdx = 2;
+    } else if (p > 0.84 && p <= 0.93) {
+      op2 = 1;
+      activeIdx = 2;
+    } else if (p > 0.93) {
+      // While done it fades black
+      op2 = Math.max(0, 1 - (p - 0.93) / 0.07);
+      activeIdx = 2;
+    }
+
+    // Dead zone resolution for active chapter
+    if (p >= 0.30 && p < 0.35) activeIdx = p >= 0.325 ? 1 : 0;
+    else if (p >= 0.71 && p < 0.76) activeIdx = p >= 0.735 ? 2 : 1;
+
+    const opacities = [op0, op1, op2];
+
+    slides.forEach((slide, i) => {
+      const op = opacities[i];
+      slide.style.setProperty('--op', op.toFixed(3));
+      slide.style.setProperty('--sc', (1 + (1 - op) * 0.02).toFixed(3));
+      slide.classList.toggle('is-active', op > 0.1);
+    });
+
+    details.forEach((detail, i) => {
+      const isActive = i === activeIdx;
+      detail.classList.toggle('is-active', isActive);
+      if (p > 0.93 && i === 2) {
+        detail.style.opacity = op2.toFixed(3);
+      } else {
+        detail.style.opacity = '';
+      }
+    });
+
+    chapters.forEach((btn, i) => {
+      btn.classList.toggle('is-active', i === activeIdx);
+    });
+
+    if (countEl) countEl.textContent = String(activeIdx + 1).padStart(2, '0');
+    if (barEl) barEl.style.setProperty('--p', p.toFixed(3));
+  };
+
+  const renderStage = () => {
+    ticking = false;
+    const rect = deck.getBoundingClientRect();
+    const scrollable = deck.offsetHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+    updateStage(progress);
+  };
+
+  const targets = [0.10, 0.53, 0.88];
+  chapters.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.deckJump);
+      const scrollable = deck.offsetHeight - window.innerHeight;
+      if (scrollable > 0) {
+        const deckTop = window.scrollY + deck.getBoundingClientRect().top;
+        const targetY = deckTop + targets[idx] * scrollable;
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      } else {
+        updateStage(targets[idx]);
+      }
+    });
+  });
+
+  const requestRender = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(renderStage);
     }
   };
-  const erase = async () => {
-    const text = typer.textContent;
-    for (let i = text.length; i >= 0; i -= 1) {
-      typer.textContent = text.slice(0, i);
-      await wait(12);
-    }
-  };
-  (async () => {
-    await wait(2600);
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      await wait(2600);
-      await erase();
-      commandIndex = (commandIndex + 1) % heroCommands.length;
-      await wait(350);
-      await type(heroCommands[commandIndex]);
-    }
-  })();
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', requestRender);
+  updateStage(0);
+  renderStage();
 }
 
 /* ---------------- Pillars: sticky stage sync ---------------- */
