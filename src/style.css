@@ -1917,7 +1917,7 @@ html[data-theme="light"] .icon-moon {
 .closing-image {
   position: absolute;
   top: 0;
-  right: clamp(48px, 9vw, 160px);
+  right: clamp(20px, 5vw, 80px);
   z-index: -2;
   width: 78%;
   height: 100%;
@@ -1938,6 +1938,12 @@ html[data-theme="light"] .icon-moon {
     transparent 100%
   );
 }
+@media (min-width: 901px) {
+  html:not([data-theme="light"]) .closing-image {
+    right: clamp(-140px, -7.5vw, -56px);
+  }
+}
+
 .closing-shade {
   position: absolute;
   inset: 0;
