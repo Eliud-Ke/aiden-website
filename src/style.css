@@ -1917,12 +1917,26 @@ html[data-theme="light"] .icon-moon {
 .closing-image {
   position: absolute;
   top: 0;
-  right: 0;
+  right: clamp(48px, 9vw, 160px);
   z-index: -2;
   width: 78%;
   height: 100%;
   object-fit: cover;
   object-position: center 30%;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 14%,
+    #000 86%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 14%,
+    #000 86%,
+    transparent 100%
+  );
 }
 .closing-shade {
   position: absolute;
@@ -2091,6 +2105,7 @@ html[data-theme="light"] .icon-moon {
     opacity: 0.3;
   }
   .closing-image {
+    right: 0;
     width: 100%;
     opacity: 0.55;
   }

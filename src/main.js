@@ -53,6 +53,12 @@ const preloadLightImages = () => {
     '/aiden-vision-light.jpg',
     '/aiden-controls-light.jpg',
     '/aiden-calendar-light.jpg',
+    '/aiden-mail-light.jpg',
+    '/aiden-brain-light.jpg',
+    '/aiden-media-light.jpg',
+    '/aiden-memory-light.jpg',
+    '/day-bg-light.jpg',
+    '/closing-light.jpg',
   ].forEach((src) => {
     const img = new Image();
     img.src = src;
