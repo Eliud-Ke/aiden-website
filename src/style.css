@@ -2000,6 +2000,41 @@ html[data-theme="light"] .icon-moon {
   font-family: var(--mono);
   font-size: 11px;
 }
+.footer-notes {
+  background: #1a1a1a;
+  border-block: 1px solid rgba(255, 255, 255, 0.08);
+}
+.footer-notes-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 34px 0 180px;
+}
+.footer-note {
+  max-width: 360px;
+}
+.footer-note-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.footer-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.footer-note a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 3px;
+}
+
 .footer-word {
   margin-bottom: -0.2em;
   color: transparent;
@@ -2241,6 +2276,10 @@ html[data-theme="light"] .icon-moon {
   }
   .problem-list li {
     font-size: 15px;
+  }
+  .footer-notes-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
   .persona-grid {
     grid-template-columns: 1fr;
@@ -2684,6 +2723,10 @@ html[data-theme="light"] .no {
 }
 html[data-theme="light"] .part {
   color: rgba(24, 21, 18, 0.58);
+}
+html[data-theme="light"] .footer-notes {
+  background: #f6f2ea;
+  border-color: rgba(24, 21, 18, 0.08);
 }
 html[data-theme="light"] .yes-dim {
   color: rgba(24, 21, 18, 0.72);
