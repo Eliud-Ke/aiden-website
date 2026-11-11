@@ -36,6 +36,37 @@ const applyTheme = (theme) => {
     img.src = isLight ? img.dataset.lightSrc : img.dataset.darkSrc;
   });
 
+  // Sync hero video playback across theme switches
+  const darkVideo = document.querySelector('.hero-video-dark');
+  const lightVideo = document.querySelector('.hero-video-light');
+  if (isLight) {
+    if (lightVideo && darkVideo && darkVideo.duration && lightVideo.duration) {
+      const ratio = Math.min(1, darkVideo.currentTime / darkVideo.duration);
+      lightVideo.currentTime = ratio * (lightVideo.duration - 0.02);
+      if (darkVideo.ended || ratio >= 0.98) {
+        lightVideo.pause();
+      } else {
+        lightVideo.playbackRate = darkVideo.playbackRate || 1.0;
+        lightVideo.play().catch(() => {});
+      }
+    } else if (lightVideo) {
+      lightVideo.play().catch(() => {});
+    }
+  } else {
+    if (darkVideo && lightVideo && lightVideo.duration && darkVideo.duration) {
+      const ratio = Math.min(1, lightVideo.currentTime / lightVideo.duration);
+      darkVideo.currentTime = ratio * (darkVideo.duration - 0.02);
+      if (lightVideo.ended || ratio >= 0.98) {
+        darkVideo.pause();
+      } else {
+        darkVideo.playbackRate = lightVideo.playbackRate || 1.0;
+        darkVideo.play().catch(() => {});
+      }
+    } else if (darkVideo) {
+      darkVideo.play().catch(() => {});
+    }
+  }
+
   try {
     localStorage.setItem('aiden-theme', theme);
   } catch {
@@ -183,7 +214,7 @@ if (!reduceMotion) {
 
 /* ---------------- Header state + hero parallax ---------------- */
 const header = document.querySelector('[data-header]');
-const heroImage = document.querySelector('[data-parallax]');
+const heroMediaItems = document.querySelectorAll('[data-parallax]');
 let lastY = window.scrollY;
 let ticking = false;
 
@@ -194,8 +225,9 @@ const onScroll = () => {
     const menuOpen = navigation?.classList.contains('is-open');
     header.classList.toggle('is-hidden', !menuOpen && y > lastY && y > window.innerHeight * 0.8);
   }
-  if (heroImage && !reduceMotion && y < window.innerHeight * 1.2) {
-    heroImage.style.transform = `translate3d(0, ${y * 0.18}px, 0) scale(${1 + y * 0.00012})`;
+  if (heroMediaItems.length && !reduceMotion && y < window.innerHeight * 1.2) {
+    const transform = `translate3d(0, ${y * 0.18}px, 0) scale(${1 + y * 0.00012})`;
+    heroMediaItems.forEach((el) => { el.style.transform = transform; });
   }
   lastY = y;
   ticking = false;
@@ -209,7 +241,43 @@ window.addEventListener('scroll', () => {
 onScroll();
 
 // Let the CSS entrance animation finish before JS takes over the transform.
-heroImage?.addEventListener('animationend', () => { heroImage.style.animation = 'none'; onScroll(); });
+heroMediaItems.forEach((el) => {
+  el.addEventListener('animationend', () => { el.style.animation = 'none'; onScroll(); });
+});
+
+/* ---------------- Hero Video Deceleration & End Frame Freeze ---------------- */
+const setupHeroVideoDeceleration = () => {
+  const heroVideos = document.querySelectorAll('.hero-video');
+  heroVideos.forEach((video) => {
+    video.loop = false;
+
+    const onTimeUpdate = () => {
+      if (!video.duration || isNaN(video.duration)) return;
+      const remaining = video.duration - video.currentTime;
+      const slowdownWindow = Math.min(1.8, video.duration * 0.28);
+
+      if (remaining <= slowdownWindow && remaining > 0.05) {
+        const progress = (slowdownWindow - remaining) / slowdownWindow;
+        // Smoothly ease playback rate from 1.0 down to 0.18x
+        const newRate = Math.max(0.18, 1 - Math.pow(progress, 1.6) * 0.82);
+        video.playbackRate = newRate;
+      } else if (remaining > slowdownWindow && video.playbackRate !== 1.0) {
+        video.playbackRate = 1.0;
+      }
+    };
+
+    const onEnded = () => {
+      video.pause();
+      if (video.duration) {
+        video.currentTime = Math.max(0, video.duration - 0.02);
+      }
+    };
+
+    video.addEventListener('timeupdate', onTimeUpdate);
+    video.addEventListener('ended', onEnded);
+  });
+};
+setupHeroVideoDeceleration();
 
 /* ---------------- Active nav link ---------------- */
 const navLinks = [...document.querySelectorAll('.primary-nav a')];

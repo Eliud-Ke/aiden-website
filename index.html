@@ -101,14 +101,26 @@
       <!-- ============ HERO ============ -->
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-media" aria-hidden="true">
-          <img
-            class="hero-image"
-            src="/first%20frame.png"
-            data-light-src="/hero-light.jpg"
-            alt=""
-            fetchpriority="high"
+          <video
+            class="hero-video hero-video-dark"
+            src="/hero%20video.mp4"
+            poster="/first%20frame.png"
+            autoplay
+            muted
+            playsinline
+            preload="auto"
             data-parallax
-          />
+          ></video>
+          <video
+            class="hero-video hero-video-light"
+            src="/hero-light-video.mp4"
+            poster="/hero-light.jpg"
+            autoplay
+            muted
+            playsinline
+            preload="auto"
+            data-parallax
+          ></video>
         </div>
         <div class="hero-shade" aria-hidden="true"></div>
 
