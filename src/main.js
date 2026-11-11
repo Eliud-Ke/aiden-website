@@ -250,6 +250,19 @@ const setupHeroVideoDeceleration = () => {
   const heroVideos = document.querySelectorAll('.hero-video');
   heroVideos.forEach((video) => {
     video.loop = false;
+    video.muted = true;
+    video.defaultMuted = true;
+
+    // Mobile & Desktop autoplay kickstarter
+    const tryPlay = () => {
+      const isVisible = window.getComputedStyle(video).display !== 'none';
+      if (isVisible && video.paused) {
+        video.play().catch(() => {});
+      }
+    };
+    tryPlay();
+    window.addEventListener('touchstart', tryPlay, { once: true, passive: true });
+    window.addEventListener('scroll', tryPlay, { once: true, passive: true });
 
     const onTimeUpdate = () => {
       if (!video.duration || isNaN(video.duration)) return;
